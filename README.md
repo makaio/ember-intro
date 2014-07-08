@@ -3,11 +3,9 @@
 ## Initial Setup
 
 ### Create blank Rails Project
-_Note: Make sure ruby is 2.1.1_
+_Note: Created using ruby 2.1.1 and rails 4.1.1_
 
 $ `rails new rrug -T`
-
-$ `rails generate rspec:install`
 
 $ `rake db:create`
 
@@ -17,10 +15,6 @@ $ `rake db:create`
 	
 	gem 'ember-rails'
 	gem 'ember-source'
-	group :development, :test do
-		gem 'rspec-rails'
-		gem 'qunit-rails'
-	end
 
 $ `bundle`
 
@@ -46,7 +40,7 @@ $ `rails generate ember:bootstrap -n App --javascript-engine js`
 
 ## Create a static page
     # config/route.rb
-    root to: 'static#index'
+    root :to => 'static#index'
     
     # app/controllers/static_controller.rb
     class StaticController < ApplicationController
@@ -120,6 +114,7 @@ _Note: After creating a serializer, restart the rails server_
 	DS.RESTAdapter.reopen({
 	  namespace: 'api/v1'
 	});
+	App.ApplicationStore = DS.Store.extend({});
 	
 	# app/assets/javascripts/models/topic.js
 	App.Topic = DS.Model.extend({
@@ -127,17 +122,20 @@ _Note: After creating a serializer, restart the rails server_
 	});
 
 
-## List the leads
+## Set up the routes in Ember
 	# app/assets/javascripts/router.js
 	App.Router.map(function() {
 	  this.resource('topics', { path: '/' })
 	});
 	
 	# app/assets/javascripts/topics_route.js
-	App.TopicRoute = Ember.Route.extend({
+	App.TopicsRoute = Ember.Route.extend({
 	  model: function() { return this.store.find('topic') }
 	});
+
+_Note: At this point your Data tab in Ember should show your topics_
 	
+## Render the topics
 	# app/assets/javascripts/templates/topics.js.hbs
 	<h2>Topics</h2>
 	<ul>
@@ -145,10 +143,28 @@ _Note: After creating a serializer, restart the rails server_
     	<li>{{ title }}</li>
 	  {{/each}}
 	  
+
+	  
 # TODO:
-* Get this working
+* Show details for a topic
+* Introduce route globbing
 * Flesh out API
 * Introduce testing
 * Introduce error handling
-* Introduce route globbing
+
+## Setting up a Test Environment
+	# Gemfile
+	group :development, :test do
+		gem 'rspec-rails'
+		gem 'qunit-rails'
+	end
+	
+	# config/environments/development.rb
+	config.qunit.tests_path = "spec"
+	
+$ `rails generate rspec:install`
+
+$ `rails generate qunit:install`
+
+
 
